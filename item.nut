@@ -10,7 +10,7 @@ class Item {
     destroy_on_drop = false;
 
     constructor(){
-        ::Events.Connect("player_death", Delegate(this, "PlayerDeath"))
+        ::Events.Connect("player_death", Pointer(this, "PlayerDeath"))
     }
 
     function SetUser() {
@@ -51,7 +51,7 @@ class Item {
         user = null;
 
         if (destroy_on_drop) {
-            ::Events.Disconnect("player_death", Delegate(this, "PlayerDeath"));
+            ::Events.Disconnect("player_death", Pointer(this, "PlayerDeath"));
             item_ent.Kill();
             OnDrop();
             return;

@@ -1,4 +1,4 @@
-class ::Delegate {
+class ::Pointer {
     instance = null;
     method = null;
 
@@ -9,15 +9,15 @@ class ::Delegate {
 }
 
 ::Events <- {
-    function Connect(event_name, delegate) {
+    function Connect(event_name, ptr) {
         if (!(event_name in this)) {
             this[event_name] <- {
-                delegates = [],
+                pointers = [],
                 collected = false,
 
                 ["OnGameEvent_" + event_name] = function(event_data) {
-                    foreach (delegate in delegates) {
-                        delegate.instance[delegate.method](event_data)
+                    foreach (ptr in pointers) {
+                        ptr.instance[ptr.method](event_data)
                     }
                 }
             }
@@ -30,10 +30,10 @@ class ::Delegate {
             event_table.collected = true;
         }
 
-        event_table.delegates.append(delegate);
+        event_table.pointers.append(ptr);
     }
 
-    function Disconnect(event_name, delegate) {
+    function Disconnect(event_name, ptr) {
         local index_to_remove = -1;
 
         if (!(event_name in this)) {
@@ -41,18 +41,18 @@ class ::Delegate {
             return;
         }
 
-        foreach (i, value in this[event_name].delegates) {
-            if (delegate.method == value.method && delegate.instance == value.instance) {
+        foreach (i, inner_ptr in this[event_name].pointers) {
+            if (ptr.method == inner_ptr.method && ptr.instance == inner_ptr.instance) {
                 index_to_remove = i;
                 break;
             }
         }
 
         if (index_to_remove == -1) {
-            printl("[event.nut | Disconnect] Trying to remove a delegate from the delegate list, this will not work you idiot!");
+            printl("[event.nut | Disconnect] Trying to remove a pointer (but it does not exist) from the pointer list, this will not work you idiot!");
             return;
         }
 
-        this[event_name].delegates.remove(index_to_remove);
+        this[event_name].pointers.remove(index_to_remove);
     }
 };
