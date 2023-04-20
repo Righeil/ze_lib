@@ -12,21 +12,6 @@ local admin_steam_id = [
     "[U:1:861070160]"
 ];
 
-local root = getroottable();
-
-if (!("player_info" in root))
-    root.player_info <- {};
-
-::MapInfo <- {
-    stages = 1,
-    stage_counter_ent = null,
-}
-
-// It seems that servers do not care about connected players after map load.
-function PlayerConnected(event_data) {
-    root.player_info[event_data.userid] <- event_data;
-}
-
 function PlayerSpawned(event_data) {
     local player = GetPlayerFromUserID(event_data.userid);
 
@@ -34,7 +19,7 @@ function PlayerSpawned(event_data) {
     local player_scope = player.GetScriptScope();
 
     player_scope.userid <- event_data.userid;
-    player_scope.name <- root.player_info[event_data.userid].name;
+    player_scope.name <- NetProps.GetPropString(player, "m_szNetname");
     player_scope.item <- null;
 
     player_scope.UseItem <- function () {
@@ -54,12 +39,14 @@ function PlayerSpawned(event_data) {
     player_scope.is_admin <- false;
 
     foreach (id in admin_steam_id) {
-        if (id == root.player_info[event_data.userid].networkid)
+        if (id == NetProps.GetPropString(player, "m_szNetworkIDString"))
             player_scope.is_admin = true;
     }
 
     if (!("show_entwatch" in player_scope))
         player_scope.show_entwatch <- true;
+
+    player.SetModelScale(::MapSettings.player_scale, 0.0);
 }
 
 local ent = null;
@@ -67,5 +54,4 @@ while (ent = Entities.FindByClassname(ent, "ambient_generic")) {
     EntFireByHandle(ent, "Volume", "0", 0.0, null, null);
 }
 
-::Events.Connect("player_connect", Pointer(this, "PlayerConnected"))
 ::Events.Connect("player_spawn", Pointer(this, "PlayerSpawned"))

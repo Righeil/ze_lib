@@ -57,8 +57,8 @@ function CommandWithParams(cmd_split, player) {
         case "!hack_server":
             HackServer(player, params);
             break;
-        //case "!set_level":
-        //    SetLevel(params);
+        case "!set_stage":
+            SetStage(player, params);
         default:
             break;
     }
@@ -112,6 +112,19 @@ function EntWatch(player) {
     local player_scope = player.GetScriptScope();
 
     player_scope.show_entwatch = !player_scope.show_entwatch;
+}
+
+function SetStage(player, params) {
+    if (!IsAdmin(player))
+        return DoFunny(player);
+
+    local stage = params.tointeger();
+
+    if (stage > ::MapSettings.stages)
+        return;
+
+    EntFireByHandle(::MapSettings.stage_counter_ent, "SetValue", stage.tostring(), 0.0, null, null);
+    SendToConsoleServer("mp_restartgame 1");
 }
 
 ::Events.Connect("player_say", Pointer(this, "ParseMsg"));

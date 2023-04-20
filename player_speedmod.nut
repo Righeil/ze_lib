@@ -6,3 +6,8 @@ function ModifySpeed(speed) {
 
     NetProps.SetPropFloat(activator, "m_flMaxspeed", player_scope.max_speed * speed);
 }
+
+function AddSpeed(speed) {
+    local current_speed = NetProps.GetPropFloat(activator, "m_flMaxspeed");
+    NetProps.SetPropFloat(activator, "m_flMaxspeed", current_speed + speed);
+}
