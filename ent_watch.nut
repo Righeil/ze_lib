@@ -22,6 +22,9 @@ local ent_watch_text = EntWatchText();
         if (time > 0)
             cooldown = format("%i", time);
 
+        if (item.limited_uses)
+            cooldown = format("%i/%i", item.uses, item.max_num_of_uses);
+
         str += format("%s[%s] %s\n", item.name, cooldown, item.user.GetScriptScope().name);
         line_count += 1;
     }

@@ -17,6 +17,11 @@ local root = getroottable();
 if (!("player_info" in root))
     root.player_info <- {};
 
+::MapInfo <- {
+    stages = 1,
+    stage_counter_ent = null,
+}
+
 // It seems that servers do not care about connected players after map load.
 function PlayerConnected(event_data) {
     root.player_info[event_data.userid] <- event_data;

@@ -1,13 +1,22 @@
 class Item {
     user = null;
     user_scope = null;
+    item_ent = null;
+    pick_up_ent = null;
 
     name = null;
     team = null;
-    item_ent = null;
-    pick_up_ent = null;
+
     can_be_dropped = false;
     destroy_on_drop = false;
+    has_dropped = false;
+
+    cooldown = 0.0;
+    last_use_time = 0.0;
+
+    limited_uses = false;
+    uses = 0;
+    max_num_of_uses = 0;
 
     constructor(){
         ::Events.Connect("player_death", Pointer(this, "PlayerDeath"))
@@ -34,11 +43,23 @@ class Item {
         EntFireByHandle(item_ent, "SetParent", "!activator", 0.0, user, null);
 
         ClientPrint(user, 4, "Call for medic to use, press M3 (middle button on mouse) to drop.");
-
-        OnPickUp();
     }
 
     function Use() {}
+
+    function AllowedToUse() {
+        if (limited_uses)
+            if (uses == max_num_of_uses)
+                return false;
+
+        if (Time() < last_use_time + cooldown)
+            return false;
+
+        last_use_time = Time();
+        uses += 1;
+
+        return true;
+    }
 
     function Drop(player_died) {
         if (!can_be_dropped && !player_died)
@@ -61,7 +82,6 @@ class Item {
         OnDrop();
     }
 
-    function OnPickUp() {}
     function OnDrop() {}
 
     function PlayerDeath(event_data) {
