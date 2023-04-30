@@ -16,21 +16,12 @@ local ent_watch_text = EntWatchText();
     local line_count = 0;
 
     foreach (item in active_items) {
-        local time = item.last_use_time + item.cooldown - Time();
-        local cooldown = "R";
-
-        if (time > 0)
-            cooldown = format("%i", time);
-
-        if (item.limited_uses)
-            cooldown = format("%i/%i", item.uses, item.max_num_of_uses);
-
-        str += format("%s[%s] %s\n", item.name, cooldown, item.user.GetScriptScope().name);
+        str += item.ToEntWatchString();
         line_count += 1;
     }
 
     ent_watch_text.Update(str);
-    ent_watch_text.SetY(0.5 - (line_count * 0.025));
+    ent_watch_text.SetY(0.5 - (line_count * 0.0225));
 
     for (local i = 1; i <= Constants.Server.MAX_PLAYERS; i++)
     {

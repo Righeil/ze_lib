@@ -20,6 +20,7 @@ class Item {
 
     constructor(){
         ::Events.Connect("player_death", Pointer(this, "PlayerDeath"))
+        last_use_time = Time() - cooldown;
     }
 
     function SetUser() {
@@ -93,5 +94,15 @@ class Item {
 
         if (user_scope.userid == event_data.userid)
             Drop(true);
+    }
+
+    function ToEntWatchString() {
+        local time = last_use_time + cooldown - Time();
+        local cooldown = "R";
+
+        if (time > 0)
+            cooldown = format("%i", time);
+
+        return format("%s[%s] %s\n", name, cooldown, user.GetScriptScope().name);
     }
 }
