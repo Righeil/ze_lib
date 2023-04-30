@@ -9,7 +9,8 @@ enum Team {
 }
 
 local admin_steam_id = [
-    "[U:1:861070160]"
+    "[U:1:861070160]",
+    "[U:1:125329043]",
 ];
 
 function PlayerSpawned(event_data) {
@@ -49,9 +50,17 @@ function PlayerSpawned(event_data) {
     player.SetModelScale(::MapSettings.player_scale, 0.0);
 }
 
-local ent = null;
-while (ent = Entities.FindByClassname(ent, "ambient_generic")) {
-    EntFireByHandle(ent, "Volume", "0", 0.0, null, null);
+function StopSound(event) {
+    local ent = null;
+    while (ent = Entities.FindByClassname(ent, "ambient_generic")) {
+        EntFireByHandle(ent, "Volume", "0", 0.0, null, null);
+    }
 }
 
+::Events.Connect("teamplay_restart_round", Pointer(this, "StopSound"));
+::Events.Connect("teamplay_round_win", Pointer(this, "StopSound"));
+::Events.Connect("teamplay_round_restart_seconds", Pointer(this, "StopSound"));
+
 ::Events.Connect("player_spawn", Pointer(this, "PlayerSpawned"))
+
+SendToServerConsole("mp_waitingforplayers_cancel 1");
