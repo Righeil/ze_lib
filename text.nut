@@ -13,7 +13,7 @@ class EntWatchText extends Text {
             targetname = "ent_watch_text",
             X = "0.01",
             Y = "0.5",
-            Channel = 3,
+            Channel = 5,
             Color = Vector(204, 204, 204),
             Effect = "0",
             FadeIn = "0.2",

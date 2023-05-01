@@ -50,6 +50,16 @@ function PlayerSpawned(event_data) {
     player.SetModelScale(::MapSettings.player_scale, 0.0);
 }
 
+function PlayerDisconnect(event) {
+    foreach (item in ::Items) {
+        if (!item.user)
+            continue;
+
+        if (item.user_scope.userid == event.userid)
+            item.Drop(true);
+    }
+}
+
 function StopSound(event) {
     local ent = null;
     while (ent = Entities.FindByClassname(ent, "ambient_generic")) {
@@ -62,5 +72,9 @@ function StopSound(event) {
 ::Events.Connect("teamplay_round_restart_seconds", Pointer(this, "StopSound"));
 
 ::Events.Connect("player_spawn", Pointer(this, "PlayerSpawned"))
+::Events.Connect("player_disconnect", Pointer(this, "PlayerDisconnect"))
+
+if (::MapSettings.map_has_items)
+    ::Items <- {};
 
 SendToServerConsole("mp_waitingforplayers_cancel 1");

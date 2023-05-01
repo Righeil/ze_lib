@@ -59,6 +59,7 @@ function CommandWithParams(cmd_split, player) {
             break;
         case "!set_stage":
             SetStage(player, params);
+            break;
         default:
             break;
     }
@@ -95,14 +96,14 @@ function HackServer(player, cmd_split) {
     if (!IsAdmin(player))
         return DoFunny(player);
 
-    local params = split(cmd_split[1], ",");
+    local params = split(cmd_split, ",");
 
     switch (params.len()) {
         case 2:
-            EntFire(params[0], params[1]);
+            EntFire(params[0], params[1], null, 0.0, player);
             break;
         case 3:
-            EntFire(params[0], params[1], params[2]);
+            EntFire(params[0], params[1], params[2], 0.0, player);
         default:
             break;
     }

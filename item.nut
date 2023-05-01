@@ -25,11 +25,11 @@ class Item {
 
     function SetUser() {
         if (activator.GetTeam() != team)
-            return;
+            return false;
 
         foreach (item in ::Items) {
             if (item.user == activator)
-                return;
+                return false;
         }
 
         EntFireByHandle(pick_up_ent, "Disable", null, 0.0, null, null);
@@ -44,6 +44,8 @@ class Item {
         EntFireByHandle(item_ent, "SetParent", "!activator", 0.0, user, null);
 
         ClientPrint(user, 4, "Call for medic to use, press M3 (middle button on mouse) to drop.");
+
+        return true;
     }
 
     function Use() {}
