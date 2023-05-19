@@ -1,10 +1,8 @@
-IncludeScript("ze_lib/text");
-
-::EntWatch <- {};
+IncludeScript("ze_lib/general/text");
 
 local ent_watch_text = EntWatchText();
 
-::EntWatch.UpdateText <- function() {
+function UpdateText() {
     local active_items = [];
 
     foreach (item in ::Items) {

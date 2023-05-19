@@ -19,7 +19,7 @@ class Item {
     max_num_of_uses = 0;
 
     constructor(){
-        ::Events.Connect("player_death", Pointer(this, "PlayerDeath"))
+        ::Events.Connect("player_death", this, "PlayerDeath");
         last_use_time = Time() - cooldown;
     }
 
@@ -75,7 +75,7 @@ class Item {
         user = null;
 
         if (destroy_on_drop) {
-            ::Events.Disconnect("player_death", Pointer(this, "PlayerDeath"));
+            ::Events.Disconnect("player_death", this, "PlayerDeath");
             item_ent.Kill();
             OnDrop();
             return;

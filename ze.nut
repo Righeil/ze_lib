@@ -1,7 +1,12 @@
-ClearGameEventCallbacks()
+ClearGameEventCallbacks();
+SendToServerConsole("mp_waitingforplayers_cancel 1");
 
-IncludeScript("ze_lib/event");
-IncludeScript("ze_lib/commands");
+IncludeScript("ze_lib/general/ref");
+IncludeScript("ze_lib/general/event");
+IncludeScript("ze_lib/general/timer");
+IncludeScript("ze_lib/general/enums");
+IncludeScript("ze_lib/general/hook");
+IncludeScript("ze_lib/commands/commands");
 
 enum Team {
     Zombozo = 2,
@@ -60,21 +65,26 @@ function PlayerDisconnect(event) {
     }
 }
 
-function StopSound(event) {
+::StopSound <- function(event = null) {
     local ent = null;
     while (ent = Entities.FindByClassname(ent, "ambient_generic")) {
         EntFireByHandle(ent, "Volume", "0", 0.0, null, null);
     }
 }
 
-::Events.Connect("teamplay_restart_round", Pointer(this, "StopSound"));
-::Events.Connect("teamplay_round_win", Pointer(this, "StopSound"));
-::Events.Connect("teamplay_round_restart_seconds", Pointer(this, "StopSound"));
+::Events.Connect("teamplay_restart_round", this, "StopSound");
+::Events.Connect("teamplay_round_win", this, "StopSound");
+::Events.Connect("teamplay_round_restart_seconds", this, "StopSound");
 
-::Events.Connect("player_spawn", Pointer(this, "PlayerSpawned"))
-::Events.Connect("player_disconnect", Pointer(this, "PlayerDisconnect"))
+::Events.Connect("player_spawn", this, "PlayerSpawned");
+::Events.Connect("player_disconnect", this, "PlayerDisconnect");
 
 if (::MapSettings.map_has_items)
     ::Items <- {};
 
-SendToServerConsole("mp_waitingforplayers_cancel 1");
+local root = getroottable();
+
+if (!("stage" in root))
+    root.stage <- 0;
+
+::Timer1S <- Timer(1);

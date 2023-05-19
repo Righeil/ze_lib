@@ -128,4 +128,4 @@ function SetStage(player, params) {
     SendToConsoleServer("mp_restartgame 1");
 }
 
-::Events.Connect("player_say", Pointer(this, "ParseMsg"));
+::Events.Connect("player_say", this, "ParseMsg");
