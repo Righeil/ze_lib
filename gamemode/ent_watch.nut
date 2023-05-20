@@ -31,5 +31,4 @@ function UpdateText() {
         if (player.GetScriptScope().show_entwatch)
             ent_watch_text.Display(player);
     }
-
 }

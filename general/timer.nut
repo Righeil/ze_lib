@@ -24,6 +24,3 @@ class Timer {
         scope.references.append(RefToMethod(instance, method));
     }
 }
-
-
-

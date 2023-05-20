@@ -15,7 +15,7 @@ function OnScriptHook_OnTakeDamage(params)
     }
 }
 
-::ListenToDamage <- function (instance, method) { // удаляй
+Listen <- function (instance, method) {
     refs.append(RefToMethod(instance, method));
 }
 

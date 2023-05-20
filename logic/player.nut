@@ -1,18 +1,3 @@
-ClearGameEventCallbacks();
-SendToServerConsole("mp_waitingforplayers_cancel 1");
-
-IncludeScript("ze_lib/general/ref");
-IncludeScript("ze_lib/general/event");
-IncludeScript("ze_lib/general/timer");
-IncludeScript("ze_lib/general/enums");
-IncludeScript("ze_lib/general/hook");
-IncludeScript("ze_lib/commands/commands");
-
-enum Team {
-    Zombozo = 2,
-    Human = 3
-}
-
 local admin_steam_id = [
     "[U:1:861070160]",
     "[U:1:125329043]",
@@ -27,6 +12,17 @@ function PlayerSpawned(event_data) {
     player_scope.userid <- event_data.userid;
     player_scope.name <- NetProps.GetPropString(player, "m_szNetname");
     player_scope.item <- null;
+
+    player_scope.CheckInputs <- function () {
+        local button = NetProps.GetPropInt(self, "m_nButtons");
+        local wanna_use = self.GetTimeSinceCalledForMedic() < 0.15;
+
+        if (wanna_use)
+            UseItem();
+
+        if (button & 33554432) // M3
+            DropItem();
+    }
 
     player_scope.UseItem <- function () {
         if (item == null)
@@ -65,26 +61,15 @@ function PlayerDisconnect(event) {
     }
 }
 
-::StopSound <- function(event = null) {
-    local ent = null;
-    while (ent = Entities.FindByClassname(ent, "ambient_generic")) {
-        EntFireByHandle(ent, "Volume", "0", 0.0, null, null);
+function CheckInputsOfItemUsers() {
+    foreach (item in ::Items) {
+        if (item.user == null)
+            return;
+
+        local user_scope = item.user_scope;
+        user_scope.CheckInputs();
     }
 }
 
-::Events.Connect("teamplay_restart_round", this, "StopSound");
-::Events.Connect("teamplay_round_win", this, "StopSound");
-::Events.Connect("teamplay_round_restart_seconds", this, "StopSound");
-
 ::Events.Connect("player_spawn", this, "PlayerSpawned");
 ::Events.Connect("player_disconnect", this, "PlayerDisconnect");
-
-if (::MapSettings.map_has_items)
-    ::Items <- {};
-
-local root = getroottable();
-
-if (!("stage" in root))
-    root.stage <- 0;
-
-::Timer1S <- Timer(1);

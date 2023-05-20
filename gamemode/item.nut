@@ -18,7 +18,7 @@ class Item {
     uses = 0;
     max_num_of_uses = 0;
 
-    constructor(){
+    constructor() {
         ::Events.Connect("player_death", this, "PlayerDeath");
         last_use_time = Time() - cooldown;
     }

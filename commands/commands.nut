@@ -27,10 +27,10 @@ function CommandNoParams(cmd_split, player) {
     local command_name = cmd_split[0];
 
     switch (command_name) {
-        case "!item_use":
+        case "!use_item":
             ItemUse(player);
             break;
-        case "!item_drop":
+        case "!drop_item":
             ItemDrop(player);
             break
         case "!entwatch":
@@ -121,10 +121,8 @@ function SetStage(player, params) {
 
     local stage = params.tointeger();
 
-    if (stage > ::MapSettings.stages)
-        return;
+    ::Main.StageLogic.Set(stage);
 
-    EntFireByHandle(::MapSettings.stage_counter_ent, "SetValue", stage.tostring(), 0.0, null, null);
     SendToConsoleServer("mp_restartgame 1");
 }
 
