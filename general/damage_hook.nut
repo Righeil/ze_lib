@@ -11,7 +11,15 @@ function OnScriptHook_OnTakeDamage(params)
     }
 
     foreach (ref in refs) {
-        ref.instance[ref.method](params);
+        if (ref.instance == null)
+            continue;
+
+        foreach (hitbox_ent in ref.instance.HitBoxes) {
+            if (hitbox_ent == params.const_entity) {
+                ref.instance[ref.method](params);
+                return;
+            }
+        }
     }
 }
 
