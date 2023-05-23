@@ -17,7 +17,7 @@ StageLogic <- {}; IncludeScript("ze_lib/logic/stage", StageLogic);
 ::SlowTimer <- Timer(1);
 ::FastTimer <- Timer(0.01);
 
-EntWatch = {};
+EntWatch <- {};
 
 if (::MapSettings.map_has_items) {
     ::Items <- [];

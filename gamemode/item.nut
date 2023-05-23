@@ -31,6 +31,8 @@ class Item {
         last_use_time = Time() - Cooldown;
 
         NetProps.SetPropBool(flag_ent, "m_bGlowEnabled", false)
+        NetProps.SetPropInt(flag_ent, "m_fEffects", 129);
+        NetProps.SetPropInt(tie_ent, "m_fEffects", 129);
 
         local team_num = NetProps.GetPropInt(flag_ent, "m_iTeamNum");
 
@@ -109,8 +111,8 @@ class Item {
         user = null;
 
         if (team == Team.Zombozo) {
-            flag_ent.Kill();
             tie_ent.Kill();
+            flag_ent.Kill();
             return;
         }
     }
@@ -139,7 +141,7 @@ SetUser <- @() instance.SetUser();
 
 Drop <- function() {
     if (NetProps.GetPropInt(instance.user, "m_lifeState") != 0)
-        return instance.Drop(true);
+        return instance.Drop();
 
-    instance.Drop(false);
+    instance.Drop();
 }
