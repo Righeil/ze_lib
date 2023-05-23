@@ -1,9 +1,9 @@
 class Item {
-    Name = null;
-    Cooldown = 0.0;
-    LimitedUses = false;
-    MaxNumOfUses = 0;
-    ShowInEntWatch = true;
+    name = null;
+    cooldown = 0.0;
+    limited_uses = false;
+    max_num_of_uses = 0;
+    show_in_ent_watch = true;
 
     uses = 0;
     user = null;
@@ -28,7 +28,7 @@ class Item {
         // So just unparent item_teamflag from tie_ent
         EntFireByHandle(flag_ent, "ClearParent", null, 0.0, null, null);
 
-        last_use_time = Time() - Cooldown;
+        last_use_time = Time() - cooldown;
 
         NetProps.SetPropBool(flag_ent, "m_bGlowEnabled", false)
         NetProps.SetPropInt(flag_ent, "m_fEffects", 129);
@@ -69,17 +69,17 @@ class Item {
     }
 
     function TryToUse() {
-        if (LimitedUses) {
+        if (limited_uses) {
             if (Time() < last_use_time + 0.1)
                 return;
 
-            if (uses == MaxNumOfUses)
+            if (uses == max_num_of_uses)
                 return;
 
             uses += 1;
         }
 
-        if (Time() < last_use_time + Cooldown)
+        if (Time() < last_use_time + cooldown)
             return;
 
         last_use_time = Time();
@@ -118,23 +118,26 @@ class Item {
     }
 
     function GetEntWatchString() {
-        local time = last_use_time + Cooldown - Time();
+        local time = last_use_time + cooldown - Time();
         local cooldown = "R";
 
         if (time > 0)
             cooldown = format("%i", time);
 
-        return format("%s[%s] %s\n", Name, cooldown, user_scope.name);
+        return format("%s[%s]: %s\n", name, cooldown, user_scope.name);
     }
 }
 
 instance <- null;
 
 CreateItem <- function(item_instance) {
+    if (!::Main.can_add_items)
+        ::Main.SetupItems();
+
     instance = item_instance;
     instance.flag_ent.ConnectOutput("OnPickup", "SetUser");
     instance.flag_ent.ConnectOutput("OnDrop", "Drop");
-    ::Items.append(instance);
+    ::Main.Items.append(instance);
 }
 
 SetUser <- @() instance.SetUser();

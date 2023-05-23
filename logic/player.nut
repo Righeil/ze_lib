@@ -3,6 +3,8 @@ local admin_steam_id = [
     "[U:1:125329043]",
 ];
 
+player_scale <- 1.0;
+
 function PlayerSpawned(event_data) {
     local player = GetPlayerFromUserID(event_data.userid);
 
@@ -45,21 +47,11 @@ function PlayerSpawned(event_data) {
     if (!("show_entwatch" in player_scope))
         player_scope.show_entwatch <- true;
 
-    player.SetModelScale(::MapSettings.player_scale, 0.0);
-}
-
-function PlayerDisconnect(event) {
-    foreach (item in ::Items) {
-        if (!item.user)
-            continue;
-
-        if (item.user_scope.userid == event.userid)
-            item.Drop(true);
-    }
+    player.SetModelScale(player_scale, 0.0);
 }
 
 function CheckInputsOfItemUsers() {
-    foreach (item in ::Items) {
+    foreach (item in ::Main.Items) {
         if (item.user == null)
             return;
 
@@ -69,4 +61,3 @@ function CheckInputsOfItemUsers() {
 }
 
 ::Events.Connect("player_spawn", this, "PlayerSpawned");
-::Events.Connect("player_disconnect", this, "PlayerDisconnect");

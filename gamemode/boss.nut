@@ -1,5 +1,5 @@
 class Boss {
-    HitBoxes = [];
+    hitboxes = [];
 
     max_hp = 0.0;
     hp = 0.0;
@@ -11,15 +11,16 @@ class Boss {
         IncludeScript("ze_lib/gamemode/hp_bar", hp_bar);
         max_hp = hp;
         hp_bar.SetPercent(1);
+        ::Main.DamageHook.Listen(this, "TakeDamage");
     }
 
     function Stop() {
         hp_bar.Hide();
-        HitBoxes.clear();
+        hitboxes.clear();
     }
 
     function TakeDamage(params) {
-        hp -= event.damage / 12.0;
+        hp -= params.damage / 12.0;
 
         if (hp < 1)
             return Stop();
@@ -47,3 +48,8 @@ class Boss {
             max_hp = hp;
     }
 }
+
+instance <- null;
+
+Start <- @() instance.Start();
+Stop <- @() instance.Stop();

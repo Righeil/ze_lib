@@ -10,31 +10,6 @@ class Text {
     }
 }
 
-class PreGameText extends Text {
-    constructor() {
-        entity = SpawnEntityFromTable("game_text", {
-            X = "-1",
-            Y = "0.1",
-            Channel = 3,
-            message = "Waiting for players. Game starts in 30 seconds."
-            Color = Vector(204, 204, 204),
-            Effect = "0",
-            FadeIn = "0.2",
-            FadeOut = "0.2",
-            HoldTime = "1",
-            spawnflags = 1
-        });
-    }
-
-    function Update(time_to_end) {
-        NetProps.SetPropString(
-            entity,
-            "m_iszMessage",
-            format("Waiting for players. Game starts in %i seconds.", time_to_end)
-        );
-    }
-}
-
 class EntWatchText extends Text {
     constructor() {
         entity = SpawnEntityFromTable("game_text", {

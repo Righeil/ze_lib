@@ -27,7 +27,7 @@ class LegacyItem {
         if (activator.GetTeam() != team)
             return false;
 
-        foreach (item in ::Items) {
+        foreach (item in ::Main.Items) {
             if (item.user == activator)
                 return false;
         }

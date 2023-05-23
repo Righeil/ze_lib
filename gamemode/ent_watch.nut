@@ -1,11 +1,15 @@
 IncludeScript("ze_lib/general/text");
 
 local ent_watch_text = EntWatchText();
+local items = ::Main.Items;
 
 function UpdateText() {
     local active_items = [];
 
-    foreach (item in ::Items) {
+    foreach (item in items) {
+        if (!item.show_in_ent_watch)
+            continue;
+
         if (item.user != null)
             active_items.append(item);
     }
@@ -14,9 +18,6 @@ function UpdateText() {
     local line_count = 0;
 
     foreach (item in active_items) {
-        if (!item.ShowInEntWatch)
-            continue;
-
         str += item.GetEntWatchString();
         line_count += 1;
     }
