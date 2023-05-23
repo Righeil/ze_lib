@@ -14,21 +14,18 @@ function PlayerSpawned(event_data) {
     player_scope.item <- null;
 
     player_scope.CheckInputs <- function () {
-        local button = NetProps.GetPropInt(self, "m_nButtons");
-        local wanna_use = self.GetTimeSinceCalledForMedic() < 0.15;
+        //local button = NetProps.GetPropInt(self, "m_nButtons");
+        local wanna_use = self.GetTimeSinceCalledForMedic() < 0.05;
 
         if (wanna_use)
             UseItem();
-
-        if (button & 33554432) // M3
-            DropItem();
     }
 
     player_scope.UseItem <- function () {
         if (item == null)
             return;
 
-        item.Use();
+        item.TryToUse();
     }
 
     player_scope.DropItem <- function () {

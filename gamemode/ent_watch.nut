@@ -14,7 +14,10 @@ function UpdateText() {
     local line_count = 0;
 
     foreach (item in active_items) {
-        str += item.ToEntWatchString();
+        if (!item.ShowInEntWatch)
+            continue;
+
+        str += item.GetEntWatchString();
         line_count += 1;
     }
 

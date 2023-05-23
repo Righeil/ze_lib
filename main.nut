@@ -17,13 +17,13 @@ StageLogic <- {}; IncludeScript("ze_lib/logic/stage", StageLogic);
 ::SlowTimer <- Timer(1);
 ::FastTimer <- Timer(0.01);
 
-local ent_watch = {};
+EntWatch = {};
 
 if (::MapSettings.map_has_items) {
-    ::Items <- {};
-    IncludeScript("ze_lib/gamemode/ent_watch", ent_watch);
+    ::Items <- [];
+    IncludeScript("ze_lib/gamemode/ent_watch", EntWatch);
 
-    ::SlowTimer.Connect(ent_watch, "UpdateText");
+    ::SlowTimer.Connect(EntWatch, "UpdateText");
     ::FastTimer.Connect(PlayerLogic, "CheckInputsOfItemUsers");
 }
 
