@@ -1,29 +1,46 @@
 class Boss {
-    hitboxes = [];
-
     max_hp = 0.0;
     hp = 0.0;
     scale_value = 0.0;
 
+    hitboxes = [];
+
     hp_bar = {};
+
+    top_damage = {};
 
     function Start() {
         IncludeScript("ze_lib/gamemode/hp_bar", hp_bar);
         max_hp = hp;
         hp_bar.SetPercent(1);
-        ::Main.DamageHook.Listen(this, "TakeDamage");
+        ::Main.DamageHook.AddBoss(this);
     }
 
     function Stop() {
+        ::Main.DamageHook.RemoveBoss(this);
         hp_bar.Hide();
-        hitboxes.clear();
+
+        local text = {}; IncludeScript("ze_lib/general/text", text);
+        local top_damage_text = text.TopDamageText();
+
+        top_damage_text.Update(top_damage);
+        top_damage_text.Display();
+        top_damage_text.Kill();
     }
 
     function TakeDamage(params) {
-        hp -= params.damage / 12.0;
+        local damage = params.damage / 12.0
+        hp -= damage;
 
         if (hp < 1)
             return Stop();
+
+        local player_index = params.attacker.entindex();
+
+        if (!top_damage.rawin(player_index))
+            top_damage[player_index] <- 0;
+
+        top_damage[player_index] += damage;
 
         hp_bar.SetPercent(hp / max_hp);
     }

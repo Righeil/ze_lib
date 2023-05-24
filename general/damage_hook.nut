@@ -1,4 +1,4 @@
-local refs = [];
+local bosses = [];
 
 function OnScriptHook_OnTakeDamage(params)
 {
@@ -10,21 +10,30 @@ function OnScriptHook_OnTakeDamage(params)
         return;
     }
 
-    foreach (ref in refs) {
-        if (ref.instance == null)
-            continue;
-
-        foreach (hitbox_ent in ref.instance.hitboxes) {
+    foreach (boss in bosses) {
+        foreach (hitbox_ent in boss.hitboxes) {
             if (hitbox_ent == params.const_entity) {
-                ref.instance[ref.method](params);
+                boss.TakeDamage(params);
                 return;
             }
         }
     }
 }
 
-Listen <- function (instance, method) {
-    refs.append(RefToMethod(instance, method));
+AddBoss <- function(instance) {
+    bosses.append(instance);
+}
+
+RemoveBoss <- function(instance) {
+    local index_to_remove = -1;
+
+    for (local i = 0; i != bosses.len(); i++) {
+        if (bosses[i] != instance)
+            continue;
+
+        index_to_remove = i;
+        return;
+    }
 }
 
 function TryToPressButton(player, button) {
