@@ -28,6 +28,8 @@ SetupItems <- function() {
 
 function OnPostSpawn() {
     StageLogic.Start();
+    ClientPrint(null, 3, "[MAP] This map uses 'ze_lib'!\nYou can contribute to the development and insult me at  https://github.com/Thetan-ILW/ze_lib ");
 }
 
 ::Main <- this;
+
