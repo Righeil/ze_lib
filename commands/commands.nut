@@ -36,10 +36,6 @@ function CommandNoParams(cmd_split, player) {
         case "!entwatch":
             EntWatch(player);
             break;
-        case "!tp":
-            break;
-        case "!3":
-            break
         default:
             break;
     }
@@ -50,10 +46,6 @@ function CommandWithParams(cmd_split, player) {
     local params = cmd_split[1];
 
     switch (command_name) {
-        //case "!vl":
-        //    break;
-        //case "!transfer":
-        //    break;
         case "!hack_server":
             HackServer(player, params);
             break;

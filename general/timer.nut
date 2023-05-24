@@ -1,26 +1,26 @@
 class Timer {
-    entity = null;
-    scope = null;
+    _entity = null;
+    _scope = null;
 
     constructor(refire_time) {
-        entity = SpawnEntityFromTable("logic_timer", {
+        _entity = SpawnEntityFromTable("logic_timer", {
             RefireTime = refire_time.tostring(),
             StartDisabled = "0"
         })
 
-        entity.ValidateScriptScope();
-        scope = entity.GetScriptScope();
-        scope.references <- [];
-        scope.Tick <- function () {
+        _entity.ValidateScriptScope();
+        _scope = _entity.GetScriptScope();
+        _scope.references <- [];
+        _scope.Tick <- function () {
             foreach (ref in references) {
                 ref.instance[ref.method]();
             }
         }
 
-        entity.ConnectOutput("OnTimer", "Tick");
+        _entity.ConnectOutput("OnTimer", "Tick");
     }
 
     function Connect(instance, method) {
-        scope.references.append(RefToMethod(instance, method));
+        _scope.references.append(RefToMethod(instance, method));
     }
 }

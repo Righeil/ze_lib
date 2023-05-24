@@ -1,5 +1,6 @@
 class Item {
     name = null;
+    team = null;
     cooldown = 0.0;
     limited_uses = false;
     max_num_of_uses = 0;
@@ -9,68 +10,71 @@ class Item {
     user = null;
     user_scope = null;
 
-    flag_ent = null;
-    tie_ent = null;
-
-    team = null;
-    last_use_time = 0.0;
+    _flag_ent = null;
+    _tie_ent = null;
+    _last_use_time = 0.0;
 
     constructor(entity) {
-        flag_ent = entity;
+        _flag_ent = entity;
 
-        // In hammer, parent any entity to tie_ent that should be parented to item.
-        // And also you should parent item_teamflag to tie_ent, we need to get handle of it.
-        // Its the only reason we parent it to tie_ent.
-        tie_ent = flag_ent.GetMoveParent();
+        // In hammer, parent any entity to _tie_ent that should be parented to item.
+        // And also you should parent item_teamflag to _tie_ent, we need to get handle of it.
+        // Its the only reason we parent it to _tie_ent.
+        _tie_ent = _flag_ent.GetMoveParent();
 
         // We need to do it this way, because if you parent solid object OR trigger to item_teamflag,
         // you can just pick up the intel by touching those objects.
-        // So just unparent item_teamflag from tie_ent
-        EntFireByHandle(flag_ent, "ClearParent", null, 0.0, null, null);
+        // So just unparent item_teamflag from _tie_ent
+        EntFireByHandle(_flag_ent, "ClearParent", null, 0.0, null, null);
 
-        last_use_time = Time() - cooldown;
+        _last_use_time = Time() - cooldown;
 
-        NetProps.SetPropBool(flag_ent, "m_bGlowEnabled", false)
-        NetProps.SetPropInt(flag_ent, "m_fEffects", 129);
-        NetProps.SetPropInt(tie_ent, "m_fEffects", 129);
+        NetProps.SetPropBool(_flag_ent, "m_bGlowEnabled", false)
+        NetProps.SetPropInt(_flag_ent, "m_fEffects", 129);
+        NetProps.SetPropInt(_tie_ent, "m_fEffects", 129);
 
-        local team_num = NetProps.GetPropInt(flag_ent, "m_iTeamNum");
+        _flag_ent.ConnectOutput("OnPickup", "SetUser");
+        _flag_ent.ConnectOutput("OnDrop", "Drop");
+
+        if (team) return;
+
+        local team_num = NetProps.GetPropInt(_flag_ent, "m_iTeamNum");
 
         switch (team_num) {
             case 2: team = Team.Zombozo; break;
             case 3: team = Team.Human; break;
             default:
-                printl("You should set the correct team for the flag entity:" + flag_ent);
+                printl("You should set the correct team for the flag entity:" + _flag_ent);
                 break;
         }
     }
 
     function SetUser() {
-        flag_ent.SetModelScale(0.0, 0.0);
+        _flag_ent.SetModelScale(0.0, 0.0);
 
         // m_hPrevOwner always contains the player handle who picked up the item.
-        user = NetProps.GetPropEntity(flag_ent, "m_hPrevOwner");
+        user = NetProps.GetPropEntity(_flag_ent, "m_hPrevOwner");
         user_scope = user.GetScriptScope();
         user_scope.item = this;
 
         // This method is called after the player has picks up the item. Its already attached to the player's spine.
         // Just parent it to the player to get the correct collision and view.
-        EntFireByHandle(flag_ent, "SetParent", "!activator", 0.0, user, null);
-        flag_ent.SetLocalOrigin(Vector(0, 0, 0));
-        flag_ent.SetLocalAngles(QAngle(0, 0, 0));
+        EntFireByHandle(_flag_ent, "SetParent", "!activator", 0.0, user, null);
+        _flag_ent.SetLocalOrigin(Vector(0, 0, 0));
+        _flag_ent.SetLocalAngles(QAngle(0, 0, 0));
 
-        // Since each entity is parented to the tie_ent, we need to parent tie_ent to item_teamflag,
+        // Since each entity is parented to the _tie_ent, we need to parent _tie_ent to item_teamflag,
         // everything would be broken if we parent it to player, as i recall.
-        tie_ent.SetOrigin(user.GetOrigin());
-        tie_ent.SetAbsAngles(user.GetAbsAngles());
-        EntFireByHandle(tie_ent, "SetParent", "!activator", 0.0, flag_ent, null);
+        _tie_ent.SetOrigin(user.GetOrigin());
+        _tie_ent.SetAbsAngles(user.GetAbsAngles());
+        EntFireByHandle(_tie_ent, "SetParent", "!activator", 0.0, _flag_ent, null);
 
         ClientPrint(user, 4, "Press E to use, press L to drop.");
     }
 
     function TryToUse() {
         if (limited_uses) {
-            if (Time() < last_use_time + 0.1)
+            if (Time() < _last_use_time + 0.1)
                 return;
 
             if (uses == max_num_of_uses)
@@ -79,15 +83,15 @@ class Item {
             uses += 1;
         }
 
-        if (Time() < last_use_time + cooldown)
+        if (Time() < _last_use_time + cooldown)
             return;
 
-        last_use_time = Time();
+        _last_use_time = Time();
 
         local angle = user.EyeAngles();
         angle.x = 0;
         angle.z = 0;
-        flag_ent.SetAbsAngles(angle);
+        _flag_ent.SetAbsAngles(angle);
 
         Use();
     }
@@ -95,11 +99,11 @@ class Item {
     function Use() {}
 
     function Drop() {
-        // This is the only way that works to set the origin of tie_ent to flag_ent.
-        EntFireByHandle(tie_ent, "SetParent", "!activator", 0.0, flag_ent, null);
-        EntFireByHandle(tie_ent, "ClearParent", null, 0.0, null, null);
+        // This is the only way that works to set the origin of _tie_ent to _flag_ent.
+        EntFireByHandle(_tie_ent, "SetParent", "!activator", 0.0, _flag_ent, null);
+        EntFireByHandle(_tie_ent, "ClearParent", null, 0.0, null, null);
 
-        flag_ent.SetModelScale(1.0, 0.25);
+        _flag_ent.SetModelScale(1.0, 0.25);
 
         // We are not playing CTF here.
         local icon = Entities.FindByClassname(null, "item_teamflag_return_icon");
@@ -111,14 +115,14 @@ class Item {
         user = null;
 
         if (team == Team.Zombozo) {
-            tie_ent.Kill();
-            flag_ent.Kill();
+            _tie_ent.Kill();
+            _flag_ent.Kill();
             return;
         }
     }
 
     function GetEntWatchString() {
-        local time = last_use_time + cooldown - Time();
+        local time = _last_use_time + cooldown - Time();
         local cooldown = "R";
 
         if (time > 0)
@@ -135,8 +139,6 @@ CreateItem <- function(item_instance) {
         ::Main.SetupItems();
 
     instance = item_instance;
-    instance.flag_ent.ConnectOutput("OnPickup", "SetUser");
-    instance.flag_ent.ConnectOutput("OnDrop", "Drop");
     ::Main.Items.append(instance);
 }
 

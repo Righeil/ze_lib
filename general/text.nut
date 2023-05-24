@@ -1,22 +1,22 @@
 class Text {
-    entity = null;
+    _entity = null;
 
     function Update(message) {
-        NetProps.SetPropString(entity, "m_iszMessage", message);
+        NetProps.SetPropString(_entity, "m_iszMessage", message);
     }
 
     function Display() {
-        EntFireByHandle(entity, "Display", null, 0.0, null, null);
+        EntFireByHandle(_entity, "Display", null, 0.0, null, null);
     }
 
     function Kill() {
-        entity.Kill();
+        _entity.Kill();
     }
 }
 
 class EntWatchText extends Text {
     constructor() {
-        entity = SpawnEntityFromTable("game_text", {
+        _entity = SpawnEntityFromTable("game_text", {
             X = "0.01",
             Y = "0.5",
             Channel = 4,
@@ -30,17 +30,17 @@ class EntWatchText extends Text {
     }
 
     function Display(player) {
-        EntFireByHandle(entity, "Display", null, 0.0, player, null);
+        EntFireByHandle(_entity, "Display", null, 0.0, player, null);
     }
 
     function SetY(value) {
-        NetProps.SetPropFloat(entity, "m_textParms.y", value);
+        NetProps.SetPropFloat(_entity, "m_textParms.y", value);
     }
 }
 
 class TopDamageText extends Text {
     constructor() {
-        entity = SpawnEntityFromTable("game_text", {
+        _entity = SpawnEntityFromTable("game_text", {
             X = "-1",
             Y = "0.7",
             Channel = 3,
@@ -68,7 +68,7 @@ class TopDamageText extends Text {
             str += format("\n%s: %i", player_name, damage);
         }
 
-        NetProps.SetPropString(entity, "m_iszMessage", str);
+        NetProps.SetPropString(_entity, "m_iszMessage", str);
     }
 
     function SortTableByValue(table) {
