@@ -143,10 +143,4 @@ CreateItem <- function(item_instance) {
 }
 
 SetUser <- @() instance.SetUser();
-
-Drop <- function() {
-    if (NetProps.GetPropInt(instance.user, "m_lifeState") != 0)
-        return instance.Drop();
-
-    instance.Drop();
-}
+Drop <- @() instance.Drop();

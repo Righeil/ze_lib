@@ -53,10 +53,9 @@ function PlayerSpawned(event_data) {
 function CheckInputsOfItemUsers() {
     foreach (item in ::Main.Items) {
         if (item.user == null)
-            return;
+            continue;
 
-        local user_scope = item.user_scope;
-        user_scope.CheckInputs();
+        item.user_scope.CheckInputs();
     }
 }
 

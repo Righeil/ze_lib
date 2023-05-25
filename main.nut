@@ -24,6 +24,8 @@ SetupItems <- function() {
 
     ::SlowTimer.Connect(EntWatch, "UpdateText");
     ::FastTimer.Connect(PlayerLogic, "CheckInputsOfItemUsers");
+
+    can_add_items = true;
 }
 
 function OnPostSpawn() {
